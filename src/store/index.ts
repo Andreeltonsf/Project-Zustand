@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create, type StateCreator } from "zustand";
 
 type Store = {
   counter: number;
@@ -13,15 +13,27 @@ type Actions = {
   setUsername: (username: string) => void;
 };
 
-export const useStore = create<Store & Actions>()((set) => ({
-  counter: 0,
-  //Increment deve ser imutável
-  user: {
-    username: "andreeltonsf",
-  },
-  increment: () => set((prevState) => ({ counter: prevState.counter + 1 })),
-  decrement: () => set((prevState) => ({ counter: prevState.counter - 1 })),
-  setUsername: (username: string) => set({
-    user:{username}
-  })
-}));
+function logOperations(
+  initializer: StateCreator<Store & Actions, [], []>
+): StateCreator<Store & Actions, [], []> {
+  return (set, get, api) => {
+    const setWithLog: typeof set = (...args) => {
+      console.log("set", args);
+      set(...args);
+    };
+
+    return initializer(setWithLog, get, api);
+  };
+}
+
+export const useStore = create<Store & Actions>()(
+  logOperations((set, get) => ({
+    counter: 0,
+    user: {
+      username: "andreeltonsf",
+    },
+    increment: () => set((state) => ({ counter: state.counter + 1 })),
+    decrement: () => set((state) => ({ counter: state.counter - 1 })),
+    setUsername: (username) => set((state) => ({ user: { username } })),
+  }))
+);
