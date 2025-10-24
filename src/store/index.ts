@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
 type Store = {
   counter: number;
@@ -15,23 +15,34 @@ type Actions = {
 };
 
 export const useStore = create<Store & Actions>()(
-  persist(
-    (set, get) => ({
-      counter: 0,
-      user: {
-        username: "andreeltonsf",
-      },
-      increment: () => set((state) => ({ counter: state.counter + 1 })),
-      decrement: () => set((state) => ({ counter: state.counter - 1 })),
-      setUsername: (username) => set((state) => ({ user: { username } })),
-    }),
+  devtools(
+    persist(
+      (set, get) => ({
+        counter: 0,
+        user: {
+          username: "andreeltonsf",
+        },
+        increment: () =>
+          set((state) => ({ counter: state.counter + 1 }), false, "increment"),
+        decrement: () =>
+          set((state) => ({ counter: state.counter - 1 }), false, "decrement"),
+        setUsername: (username) =>
+          set((state) => ({ user: { username } }), false, "setUsername"),
+      }),
+      {
+        name: "project-zustand",
+        storage: createJSONStorage(() => ({
+          getItem: (key) => sessionStorage.getItem(key),
+          setItem: (key, value) => localStorage.setItem(key, value),
+          removeItem: (key) => localStorage.removeItem(key),
+        })),
+      }
+    ),
     {
+      enabled: import.meta.env.DEV,
       name: "project-zustand",
-      storage: createJSONStorage(() => ({
-        getItem: (key) => sessionStorage.getItem(key),
-        setItem: (key, value) => localStorage.setItem(key, value),
-        removeItem: (key) => localStorage.removeItem(key),
-      })),
+      store: "GLobal Store",
+      anonymousActionType: "GLobal Action",
     }
   )
 );
