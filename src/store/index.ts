@@ -1,43 +1,15 @@
 import create from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import type { Store } from "./Store";
+import { createCounterSlice } from "./slices/counterSlice";
+import { createUserSlice } from "./slices/userSlice";
 
-type Store = {
-  counter: number;
-  user: {
-    username: string;
-    email: string;
-    name: string;
-  };
-};
-
-type Actions = {
-  increment: () => void;
-  decrement: () => void;
-  setUsername: (username: string) => void;
-};
-
-export const useStore = create<Store & Actions>()(
+export const useStore = create<Store>()(
   devtools(
-    immer((set, get) => ({
-      counter: 0,
-      user: {
-        username: "andreeltonsf",
-        email: "andreeltonsf@gmail.com",
-        name: "Andreel Tonsf",
-      },
-      increment: () =>
-        set((state) => {
-          state.counter += 1;
-        }),
-      decrement: () =>
-        set((state) => {
-          state.counter -= 1;
-        }),
-      setUsername: (username) =>
-        set((prevState) => {
-          prevState.user.username = username;
-        }),
+    immer((...params) => ({
+      user: createUserSlice(...params),
+      counter: createCounterSlice(...params),
     }))
   )
 );

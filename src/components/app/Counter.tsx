@@ -6,14 +6,14 @@ export function Counter() {
   const { counter, increment, decrement } = useStore(
     useShallow((state) => ({
       counter: state.counter,
-      increment: state.increment,
-      decrement: state.decrement,
+      increment: state.counter.increment,
+      decrement: state.counter.decrement,
     }))
   );
 
   return (
     <div className="space-y-4 space-x-2">
-      <h1>Counter: {counter}</h1>
+      <h1>Counter: {counter.value}</h1>
       <Button type="button" onClick={increment}>
         Incrementar
       </Button>

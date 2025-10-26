@@ -16,13 +16,13 @@ export function UserProfile() {
   const { user, setUsername } = useStore(
     useShallow((state) => ({
       user: state.user,
-      setUsername: state.setUsername,
+      setUsername: state.user.setUsername,
     }))
   );
 
   const form = useForm({
     defaultValues: {
-      username: user.username,
+      username: user.user.username,
     },
   });
 
@@ -34,10 +34,12 @@ export function UserProfile() {
     <div className="space-y-4 space-x-2">
       <Avatar>
         <AvatarImage
-          src={`https://github.com/${user.username}.png`}
-          alt={`@${user.username}`}
+          src={`https://github.com/${user.user.username}.png`}
+          alt={`@${user.user.username}`}
         />
-        <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
+        <AvatarFallback>
+          {user.user.username.charAt(0).toUpperCase()}
+        </AvatarFallback>
       </Avatar>
       <form className="space-y-4 flex" onSubmit={handleSubmit}>
         <Input placeholder="Username" {...form.register("username")} />

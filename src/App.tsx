@@ -21,7 +21,7 @@ function App() {
   }); */
 
   return (
-    <div className=" min-h-screen p-6 grid place-items-center">
+    <div className="flex flex-row gap-10 p-10 justify-center items-center">
       <Counter />
       <UserProfile />
     </div>
